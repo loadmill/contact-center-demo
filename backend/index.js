@@ -41,6 +41,14 @@ app.post('/api/customer/message', (req, res) => {
 // Agent Endpoints
 // ----------------------
 
+// POST /api/agent/login
+// mock login api
+app.post('/api/agent/login', (req, res) => {
+  // We ignore the actual credentials and return success
+  res.json({ success: true });
+});
+
+
 // GET /api/agent/messages
 // Agent retrieves all pending messages.
 app.get('/api/agent/messages', (req, res) => {
@@ -91,7 +99,7 @@ app.post('/api/agent/resolve', (req, res) => {
 // Serve static files from the frontend build folder
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-// Serve the React app for any other route
+// Serve the React app for any route not handled by API
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
