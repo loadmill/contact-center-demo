@@ -6,6 +6,8 @@ Below is a short README in a clear and straightforward style:
 
 This project shows how Loadmill can automate testing for a contact center workflow. It features two views—one for the customer and one for the support agent.
 
+<img width="1440" alt="contact-center" src="https://github.com/user-attachments/assets/81b8c641-af1e-43bb-8e14-40ffa52a13f0" />
+
 ## Project Structure
 
 ```
