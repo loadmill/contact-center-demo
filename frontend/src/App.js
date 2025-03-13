@@ -1,33 +1,39 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import CustomerChat from './CustomerChat';
 import SupportAgent from './SupportAgent';
+import AgentLogin from './AgentLogin';
 
-function App() {
-  const [view, setView] = useState(null);
-
-  if (!view) {
-    return (
-      <div style={styles.selectionContainer}>
-        <h2 style={styles.title}>Select a View</h2>
-        <button style={styles.button} onClick={() => setView('customer')}>
-          Customer View
-        </button>
-        <button style={styles.button} onClick={() => setView('agent')}>
-          Agent View
-        </button>
-      </div>
-    );
-  }
-
+function Home() {
   return (
-    <div>
-      {view === 'customer' ? <CustomerChat /> : <SupportAgent />}
+    <div style={styles.homeContainer}>
+      <h2 style={styles.title}>Welcome</h2>
+      <p>Select a view:</p>
+      <Link to="/customer" style={styles.link}>Customer View</Link>
+      <Link to="/agent/login" style={styles.link}>Agent Login</Link>
     </div>
   );
 }
 
+function App() {
+  return (
+    <Router>
+      <Routes>
+        {/* Home page */}
+        <Route path="/" element={<Home />} />
+        {/* Customer view */}
+        <Route path="/customer" element={<CustomerChat />} />
+        {/* Agent login view */}
+        <Route path="/agent/login" element={<AgentLogin />} />
+        {/* Agent view (after successful login) */}
+        <Route path="/agent" element={<SupportAgent />} />
+      </Routes>
+    </Router>
+  );
+}
+
 const styles = {
-  selectionContainer: {
+  homeContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -39,15 +45,17 @@ const styles = {
   title: {
     marginBottom: '20px',
   },
-  button: {
-    padding: '10px 20px',
+  link: {
+    display: 'inline-block',
     margin: '10px',
+    padding: '10px 20px',
     fontSize: '16px',
     border: 'none',
     borderRadius: '5px',
     backgroundColor: '#075E54',
     color: '#fff',
-    cursor: 'pointer',
+    textDecoration: 'none',
+    textAlign: 'center',
   },
 };
 
