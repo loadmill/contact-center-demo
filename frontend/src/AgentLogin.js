@@ -30,73 +30,91 @@ function AgentLogin() {
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Agent Login</h2>
-      <form onSubmit={handleLogin} style={styles.form}>
-        <label style={styles.label}>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            style={styles.input}
-            required
-          />
-        </label>
-        <label style={styles.label}>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            style={styles.input}
-            required
-          />
-        </label>
-        <button type="submit" style={styles.button}>
-          Log In
-        </button>
-      </form>
+    <div style={styles.pageContainer}>
+      <div style={styles.loginBox}>
+        <h2 style={styles.title}>Agent Login</h2>
+        <form onSubmit={handleLogin} style={styles.form}>
+          <label style={styles.label}>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              style={styles.input}
+              required
+            />
+          </label>
+          <label style={styles.label}>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              style={styles.input}
+              required
+            />
+          </label>
+          <button type="submit" style={styles.button}>
+            Log In
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
 
 const styles = {
-  container: {
-    width: '100%',
-    maxWidth: '400px',
-    margin: '40px auto',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '6px',
+  pageContainer: {
+    backgroundColor: '#f9f9f9',
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     fontFamily: 'Arial, sans-serif',
+  },
+  loginBox: {
+    width: '360px',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    border: '1px solid #2c3e50',
+    padding: '30px 40px',
+    textAlign: 'center',
   },
   title: {
     marginBottom: '20px',
-    textAlign: 'center',
+    color: '#004080',
+    fontSize: '24px',
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '10px',
+    gap: '15px',
+    textAlign: 'left',
   },
   label: {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    color: '#2c3e50',
     display: 'flex',
     flexDirection: 'column',
-    fontSize: '14px',
+    marginBottom: '5px',
   },
   input: {
-    padding: '8px',
-    marginTop: '4px',
+    marginTop: '5px',
+    padding: '10px',
     borderRadius: '4px',
     border: '1px solid #ccc',
+    fontSize: '14px',
   },
   button: {
-    padding: '10px',
+    marginTop: '10px',
+    padding: '12px',
     backgroundColor: '#004080',
     color: '#fff',
     border: 'none',
     borderRadius: '4px',
+    fontSize: '16px',
     cursor: 'pointer',
   },
 };
