@@ -5,7 +5,9 @@
     "scripts": {
         "backend": "nodemon backend/index.js",
         "frontend": "cd frontend && npm start",
-        "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+        "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+        "start": "node backend/index.js",
+        "heroku-postbuild": "cd frontend && npm install && npm run build"
     },
     "devDependencies": {
         "concurrently": "^8.0.0",
