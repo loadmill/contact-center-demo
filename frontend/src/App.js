@@ -9,8 +9,8 @@ function Home() {
     <div style={styles.homeContainer}>
       <h2 style={styles.title}>Welcome</h2>
       <p>Select a view:</p>
-      <Link to="/customer" style={styles.link}>Customer View</Link>
-      <Link to="/agent/login" style={styles.link}>Agent Login</Link>
+      <Link reloadDocument to="/customer" style={styles.link}>Customer View</Link>
+      <Link reloadDocument to="/agent/login" style={styles.link}>Agent Login</Link>
     </div>
   );
 }
