@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 function AgentLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,8 +16,8 @@ function AgentLogin() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        // Redirect to the agent dashboard
-        navigate('/agent');
+        // Force a full page reload, triggering a network request
+        window.location.href = '/agent';
       } else {
         alert('Login failed');
       }
@@ -58,6 +56,9 @@ function AgentLogin() {
             Log In
           </button>
         </form>
+        <p style={styles.note}>
+          You can use any password to log in.
+        </p>
       </div>
     </div>
   );
@@ -116,6 +117,11 @@ const styles = {
     borderRadius: '4px',
     fontSize: '16px',
     cursor: 'pointer',
+  },
+  note: {
+    marginTop: '15px',
+    fontSize: '12px',
+    color: '#777',
   },
 };
 
