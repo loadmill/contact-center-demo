@@ -9,6 +9,11 @@
         "start": "node backend/index.js",
         "heroku-postbuild": "cd frontend && npm install && npm run build"
     },
+    "dependencies": {
+        "express": "^4.21.2",
+        "cors": "^2.8.5",
+        "path": "^0.12.7"
+    },
     "devDependencies": {
         "concurrently": "^8.0.0",
         "nodemon": "^2.0.0"
