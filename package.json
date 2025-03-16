@@ -10,8 +10,9 @@
         "heroku-postbuild": "cd frontend && npm install && npm run build"
     },
     "dependencies": {
-        "express": "^4.21.2",
+        "@loadmill/node-recorder": "^0.3.157",
         "cors": "^2.8.5",
+        "express": "^4.21.2",
         "path": "^0.12.7"
     },
     "devDependencies": {

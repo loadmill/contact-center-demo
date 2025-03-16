@@ -1,10 +1,13 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const { expressRecorder } = require('@loadmill/node-recorder');
 const PORT = process.env.PORT || 3001;
 
 // Use JSON middleware to parse JSON bodies
 app.use(express.json());
+
+app.use(expressRecorder({ loadmillCode: '9c18750e-5978-4540-b953-e339c07f5e99' }));
 
 // In-memory message queue
 const messageQueue = [];
