@@ -139,8 +139,8 @@ const SupportAgent = () => {
 
         {/* Footer pinned at bottom */}
         <div style={styles.sidebarFooter}>
-          <a href="#" style={styles.footerLink}>Help</a>
-          <a href="#" style={styles.footerLink}>Contact</a>
+          <a href="/agent" style={styles.footerLink}>Help</a>
+          <a href="/agent" style={styles.footerLink}>Contact</a>
         </div>
       </aside>
 
