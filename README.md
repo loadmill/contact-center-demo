@@ -1,6 +1,3 @@
-Below is a short README in a clear and straightforward style:
-
----
 
 # Loadmill Demo: Contact Center Test Automation
 
@@ -61,12 +58,19 @@ project-root/
 
    Open your browser and go to [http://localhost:3000](http://localhost:3000) to use the app.
 
+## Customizing the Company Name
+
+You can change the default company name ("Loadmill") by calling the URL with a query parameter. For example, to set the company to "Acme", visit:
+
+```
+http://localhost:3000/?company=Acme
+```
+
+When the Home page loads, the app saves the company name to localStorage. This value is then used across the customer and support agent views.
+
 ## Notes
 
 - The backend uses an in-memory queue for messages. For production, consider a persistent storage solution.
 - Nodemon is used for the backend to auto-restart on changes.
 - The React development server provides live reloading for faster UI development.
-
----
-
-This README explains the goal, setup, and running instructions in a simple and clear manner.
+- The company name persists across page reloads by storing it in localStorage.
