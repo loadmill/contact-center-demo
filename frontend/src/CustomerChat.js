@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
 const CustomerChat = () => {
+  // Get company from localStorage or default to "Loadmill"
+  const company = localStorage.getItem('company') || 'Loadmill';
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
 
@@ -39,10 +41,10 @@ const CustomerChat = () => {
         <div style={styles.headerLeft}>
           <img
             src="/logo192.png"
-            alt="HK Telecom Support"
+            alt={`${company} Support`}
             style={styles.avatar}
           />
-          <span style={styles.headerText}>HK Telecom Support</span>
+          <span style={styles.headerText}>{company} Support</span>
         </div>
         <div style={styles.mockButtons}>
           <button style={styles.iconButton} title="Upload File">

@@ -1,10 +1,19 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useSearchParams } from 'react-router-dom';
 import CustomerChat from './CustomerChat';
 import SupportAgent from './SupportAgent';
 import AgentLogin from './AgentLogin';
 
 function Home() {
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const companyFromUrl = searchParams.get('company');
+    if (companyFromUrl) {
+      localStorage.setItem('company', companyFromUrl);
+    }
+  }, [searchParams]);
+
   return (
     <div style={styles.homeContainer}>
       <h2 style={styles.title}>Welcome</h2>
@@ -19,13 +28,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Home page */}
         <Route path="/" element={<Home />} />
-        {/* Customer view */}
         <Route path="/customer" element={<CustomerChat />} />
-        {/* Agent login view */}
         <Route path="/agent/login" element={<AgentLogin />} />
-        {/* Agent view (after successful login) */}
         <Route path="/agent" element={<SupportAgent />} />
       </Routes>
     </Router>

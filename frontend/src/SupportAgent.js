@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 const SupportAgent = () => {
+  // Get company from localStorage or default to "Loadmill"
+  const company = localStorage.getItem('company') || 'Loadmill';
   const [messages, setMessages] = useState([]);
   const [responses, setResponses] = useState({});
 
@@ -80,7 +82,7 @@ const SupportAgent = () => {
         <div style={styles.sidebarTop}>
           <div style={styles.sidebarHeader}>
             <img src="/logo192.png" alt="Company Logo" style={styles.logo} />
-            <h3 style={styles.companyName}>HK Telecom Support</h3>
+            <h3 style={styles.companyName}>{company} Support</h3>
           </div>
           <nav style={styles.nav}>
             <ul style={styles.menuList}>
@@ -210,11 +212,9 @@ const styles = {
     color: '#ecf0f1',
     display: 'flex',
     flexDirection: 'column',
-    // Removed justifyContent: 'space-between'
     padding: '20px',
   },
   sidebarTop: {
-    // Container for logo + nav
     display: 'flex',
     flexDirection: 'column',
   },
@@ -234,9 +234,7 @@ const styles = {
     fontSize: '18px',
     textAlign: 'center',
   },
-  nav: {
-    // Menu is right under the header
-  },
+  nav: {},
   menuList: {
     listStyle: 'none',
     padding: 0,
