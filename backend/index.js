@@ -7,7 +7,10 @@ const PORT = process.env.PORT || 3001;
 // Use JSON middleware to parse JSON bodies
 app.use(express.json());
 
-app.use(expressRecorder({ loadmillCode: '9c18750e-5978-4540-b953-e339c07f5e99' }));
+app.use(expressRecorder({ 
+  loadmillCode: '9c18750e-5978-4540-b953-e339c07f5e99',
+  basePath: 'https://loadmill-center-12baa23ad9e4.herokuapp.com/'
+}));
 
 // In-memory message queue
 const messageQueue = [];
