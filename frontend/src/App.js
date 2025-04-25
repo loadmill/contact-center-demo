@@ -42,53 +42,9 @@ function Home() {
   );
 }
 
-function RippleEffect() {
-  useEffect(() => {
-    const applyCursorRippleEffect = (e) => {
-      const ripple = document.createElement('div');
-      ripple.className = 'ripple';
-      document.body.appendChild(ripple);
-      ripple.style.left = `${e.clientX}px`;
-      ripple.style.top = `${e.clientY}px`;
-      ripple.style.animation = 'ripple-effect 0.4s linear';
-      ripple.onanimationend = () => document.body.removeChild(ripple);
-    };
-
-    document.addEventListener('click', applyCursorRippleEffect);
-    return () => {
-      document.removeEventListener('click', applyCursorRippleEffect);
-    };
-  }, []);
-
-  return (
-    <style>
-      {`
-        .ripple {
-          width: 10px;
-          height: 10px;
-          background-color: rgba(255, 165, 0, 0.3); /* slightly more transparent */
-          position: fixed;
-          border-radius: 50%;
-          border: 1px solid rgba(255, 165, 0, 0.7); /* thinner, less opaque border */
-          pointer-events: none;
-          z-index: 9999;
-        }
-
-        @keyframes ripple-effect {
-          to {
-            transform: scale(10); /* reduce scale from 15 to 10 */
-            opacity: 0;
-          }
-        }
-      `}
-    </style>
-  );
-}
-
 function App() {
   return (
     <Router>
-      <RippleEffect />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/customer" element={<CustomerChat />} />
@@ -140,6 +96,9 @@ const styles = {
     fontSize: '18px',
     transition: '0.3s',
   },
+  ctaButtonHover: {
+    backgroundColor: '#e68900',
+  },
   cardContainer: {
     display: 'flex',
     justifyContent: 'center',
@@ -165,5 +124,6 @@ const styles = {
     textDecoration: 'none',
   },
 };
+
 
 export default App;
