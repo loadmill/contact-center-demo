@@ -50,8 +50,8 @@ const Login = () => {
         </form>
         <div style={styles.demo}>
           Demo users:
-          <div><b>maker</b> / <b>maker</b></div>
-          <div><b>checker</b> / <b>checker</b></div>
+          <div><b>maker</b> / <b>maker1234!</b></div>
+          <div><b>checker</b> / <b>checker1234!</b></div>
         </div>
       </div>
     </AppLayout>

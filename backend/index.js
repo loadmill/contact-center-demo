@@ -35,7 +35,7 @@ app.post('/api/login', (req, res) => {
   const { username, password, role } = req.body;
   const user = users.find(
     u => u.username === username 
-    // && u.password === password // no need for password check in demo
+    && u.password === password
     && u.role === role
   );
   if (!user) {
