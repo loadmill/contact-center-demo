@@ -4,113 +4,169 @@ const app = express();
 const { expressRecorder } = require('@loadmill/node-recorder');
 const PORT = process.env.PORT || 3001;
 
-// Use JSON middleware to parse JSON bodies
 app.use(express.json());
 
+// Use Loadmill recorder for demo session recording
 app.use(expressRecorder({ 
-  loadmillCode: '9c18750e-5978-4540-b953-e339c07f5e99',
-  basePath: 'https://loadmill-center-12baa23ad9e4.herokuapp.com/'
+  loadmillCode: 'your-loadmill-code-here', 
+  basePath: 'https://your-loadmill-server.com/'
 }));
 
-// In-memory message queue
-const messageQueue = [];
+// ----- In-memory data -----
+const users = [
+  { username: 'maker', password: 'maker1234!', role: 'maker' },
+  { username: 'checker', password: 'checker1234!', role: 'checker' },
+];
+let transactions = [];
+let auditLog = [];
 
-// Middleware to log API calls
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
+// ----- Simple session token system -----
+const generateToken = (username, role) => `${role}-${username}-token`;
+const getUserByToken = (token) => {
+  if (!token) return null;
+  const [role, username] = token.split('-');
+  return users.find(u => u.username === username && u.role === role);
+};
+
+// ----- API Endpoints -----
+
+// Login
+app.post('/api/login', (req, res) => {
+  const { username, password, role } = req.body;
+  const user = users.find(
+    u => u.username === username 
+    // && u.password === password // no need for password check in demo
+    && u.role === role
+  );
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+  const token = generateToken(user.username, user.role);
+  res.json({ token, role: user.role, username: user.username });
 });
 
-// ----------------------
-// Customer Endpoints
-// ----------------------
-
-// POST /api/customer/message
-// Customer sends a message. The message is added to the queue.
-app.post('/api/customer/message', (req, res) => {
-  const { content } = req.body;
-  if (!content) {
-    return res.status(400).json({ error: 'Content is required.' });
+// Initiate transfer (Maker only)
+app.post('/api/transfer/initiate', (req, res) => {
+  const { token } = req.headers;
+  const user = getUserByToken(token);
+  if (!user || user.role !== 'maker') {
+    return res.status(403).json({ error: 'Unauthorized' });
   }
-  const message = {
-    id: Date.now(), // simple unique ID using timestamp
-    content,
-    responses: [],
-    status: 'pending', // status can be 'pending', 'responded', or 'resolved'
-    createdAt: new Date().toISOString()
+  const { amount, recipient } = req.body;
+  if (!amount || !recipient) {
+    return res.status(400).json({ error: 'Missing fields' });
+  }
+  const transactionId = Date.now();
+  const t = {
+    transactionId,
+    amount,
+    recipient,
+    status: 'PENDING',
+    initiatedBy: user.username,
+    approvedBy: null,
+    createdAt: new Date().toISOString(),
+    approvedAt: null,
   };
-  messageQueue.push(message);
-  res.json({ message: 'Message received', conversation: message });
-});
-
-// ----------------------
-// Agent Endpoints
-// ----------------------
-
-// POST /api/agent/login
-// mock login api
-app.post('/api/agent/login', (req, res) => {
-  // We ignore the actual credentials and return success
-  res.json({ success: true });
-});
-
-
-// GET /api/agent/messages
-// Agent retrieves all pending messages.
-app.get('/api/agent/messages', (req, res) => {
-  const pendingMessages = messageQueue.filter(msg => msg.status === 'pending');
-  res.json({ messages: pendingMessages });
-});
-
-// POST /api/agent/respond
-// Agent responds to a specific message.
-app.post('/api/agent/respond', (req, res) => {
-  const { id, response } = req.body;
-  if (!id || !response) {
-    return res.status(400).json({ error: 'Message id and response are required.' });
-  }
-  const message = messageQueue.find(msg => msg.id == id);
-  if (!message) {
-    return res.status(404).json({ error: 'Message not found.' });
-  }
-  // Add the agent response to the conversation
-  message.responses.push({
-    response,
-    respondedAt: new Date().toISOString()
+  transactions.push(t);
+  auditLog.push({
+    type: 'INITIATE',
+    actor: user.username,
+    transactionId,
+    at: new Date().toISOString(),
   });
-  // Update the status to 'responded'
-  message.status = 'responded';
-  res.json({ message: 'Response added', conversation: message });
+  res.json(t);
 });
 
-// POST /api/agent/resolve
-// Agent marks a conversation as resolved.
-app.post('/api/agent/resolve', (req, res) => {
-  const { id } = req.body;
-  if (!id) {
-    return res.status(400).json({ error: 'Message id is required.' });
+// List all transfers for Maker (Maker only)
+app.get('/api/transfer/my', (req, res) => {
+  const { token } = req.headers;
+  const user = getUserByToken(token);
+  if (!user || user.role !== 'maker') {
+    return res.status(403).json({ error: 'Unauthorized' });
   }
-  const message = messageQueue.find(msg => msg.id == id);
-  if (!message) {
-    return res.status(404).json({ error: 'Message not found.' });
-  }
-  message.status = 'resolved';
-  res.json({ message: 'Conversation resolved', conversation: message });
+  res.json(transactions.filter(t => t.initiatedBy === user.username));
 });
 
-// ----------------------
-// Serve the React App
-// ----------------------
+// List pending transfers (Checker only)
+app.get('/api/transfer/pending', (req, res) => {
+  const { token } = req.headers;
+  const user = getUserByToken(token);
+  if (!user || user.role !== 'checker') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  res.json(transactions.filter(t => t.status === 'PENDING'));
+});
 
-// Serve static files from the frontend build folder
+// Approve a transfer (Checker only)
+app.post('/api/transfer/approve', (req, res) => {
+  const { token } = req.headers;
+  const user = getUserByToken(token);
+  if (!user || user.role !== 'checker') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const { transactionId } = req.body;
+  const t = transactions.find(tx => tx.transactionId == transactionId);
+  if (!t) return res.status(404).json({ error: 'Transaction not found' });
+  if (t.status !== 'PENDING') {
+    return res.status(400).json({ error: 'Already processed' });
+  }
+  t.status = 'APPROVED';
+  t.approvedBy = user.username;
+  t.approvedAt = new Date().toISOString();
+  auditLog.push({
+    type: 'APPROVE',
+    actor: user.username,
+    transactionId,
+    at: new Date().toISOString(),
+  });
+  res.json(t);
+});
+
+// Get transaction by ID (any logged-in user)
+app.get('/api/transfer/:transactionId', (req, res) => {
+  const { token } = req.headers;
+  if (!getUserByToken(token)) return res.status(403).json({ error: 'Unauthorized' });
+  const t = transactions.find(tx => tx.transactionId == req.params.transactionId);
+  if (!t) return res.status(404).json({ error: 'Transaction not found' });
+  res.json(t);
+});
+
+// Reject a transfer (Checker only)
+app.post('/api/transfer/reject', (req, res) => {
+  const { token } = req.headers;
+  const user = getUserByToken(token);
+  if (!user || user.role !== 'checker') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const { transactionId } = req.body;
+  const t = transactions.find(tx => tx.transactionId == transactionId);
+  if (!t) return res.status(404).json({ error: 'Transaction not found' });
+  if (t.status !== 'PENDING') {
+    return res.status(400).json({ error: 'Already processed' });
+  }
+  t.status = 'REJECTED';
+  t.approvedBy = user.username;
+  t.approvedAt = new Date().toISOString();
+  auditLog.push({
+    type: 'REJECT',
+    actor: user.username,
+    transactionId,
+    at: new Date().toISOString(),
+  });
+  res.json(t);
+});
+
+// Mock audit log
+app.get('/api/audit', (req, res) => {
+  res.json(auditLog);
+});
+
+// --- Serve frontend ---
 app.use(express.static(path.join(__dirname, '../frontend/build')));
-
-// Serve the React app for any route not handled by API
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
-// Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
