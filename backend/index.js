@@ -8,8 +8,8 @@ app.use(express.json());
 
 // Use Loadmill recorder for demo session recording
 app.use(expressRecorder({ 
-  loadmillCode: 'your-loadmill-code-here', 
-  basePath: 'https://your-loadmill-server.com/'
+  loadmillCode: '9c18750e-5978-4540-b953-e339c07f5e99',
+  basePath: 'https://maker-checker-036efc6aec77.herokuapp.com/'
 }));
 
 // ----- In-memory data -----
