@@ -1,6 +1,95 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppLayout from './AppLayout';
+
+const roleOptions = [
+  { value: 'maker', label: 'Maker (Finance Officer)' },
+  { value: 'checker', label: 'Checker (Finance Manager)' },
+];
+
+const CustomDropdown = ({ value, onChange, style }) => {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClick = e => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  return (
+    <div ref={wrapperRef} style={{ ...style, position: 'relative', cursor: 'pointer', padding: 0 }}>
+      <div
+        tabIndex={0}
+        style={{
+          ...styles.input,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingRight: 24,
+          cursor: 'pointer',
+          marginBottom: 0,
+          background: '#fff'
+
+        }}
+        onClick={() => setOpen(open => !open)}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') setOpen(open => !open);
+        }}
+      >
+        {roleOptions.find(o => o.value === value)?.label}
+        <span
+          style={{
+            position: 'absolute',
+            right: 12,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            pointerEvents: 'none',
+            color: '#444',
+            fontSize: 18,
+          }}
+        >▼</span>
+
+      </div>
+      {open && (
+        <div style={dropdownStyle}>
+          {roleOptions.map(option => (
+            <div
+              key={option.value}
+              style={{
+                padding: '8px 12px',
+                background: option.value === value ? '#e6f0fa' : '#fff',
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                onChange(option.value);
+                setOpen(false);
+              }}
+            >
+              {option.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const dropdownStyle = {
+  position: 'absolute',
+  top: '100%',
+  left: 0,
+  right: 0,
+  background: '#fff',
+  border: '1px solid #b2c9de',
+  borderRadius: 5,
+  zIndex: 10,
+  marginTop: 3,
+  boxShadow: '0 2px 8px rgba(60,100,140,0.05)',
+};
 
 const Login = () => {
   const [role, setRole] = useState('maker');
@@ -33,10 +122,7 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <div style={styles.row}>
             <label style={styles.label}>Role</label>
-            <select value={role} onChange={e => setRole(e.target.value)} style={styles.input}>
-              <option value="maker">Maker (Finance Officer)</option>
-              <option value="checker">Checker (Finance Manager)</option>
-            </select>
+            <CustomDropdown value={role} onChange={setRole} style={styles.input} />
           </div>
           <div style={styles.row}>
             <label style={styles.label}>Username</label>
